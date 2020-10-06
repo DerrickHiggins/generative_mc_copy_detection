@@ -112,16 +112,16 @@ class GenMCCopyDetector:
             )
             results = {
                 k: {
-                    kk: vv if sid_order.index(k) > sid_order.index(kk) else np.nan
+                    kk: vv if sid_order.index(k) < sid_order.index(kk) else np.nan
                     for kk, vv in v.items()
                 }
-                for k, v in results.items()
+                for k, v in self.pairwise_logprobs.items()
             }
         elif student_sort_order == "id":
             sid_order = sorted(list(self.input_df.index), reverse=False)
             results = {
                 k: {kk: vv if k < kk else np.nan for kk, vv in v.items()}
-                for k, v in results.items()
+                for k, v in self.pairwise_logprobs.items()
             }
         else:
             raise Exception(
