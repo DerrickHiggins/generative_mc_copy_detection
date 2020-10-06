@@ -3,13 +3,14 @@ from typing import Union
 import operator
 import numpy as np
 import pandas as pd
+import networkx as nx
 
 ## TODO
 ## - Deal with global state
 ##   - Columns for responses (NUM_ITEMS)
 
 
-DEFAULT_ALPHA = 0.5
+DEFAULT_ALPHA = 0.8
 
 
 class GenMCCopyDetector:
@@ -152,3 +153,19 @@ class GenMCCopyDetector:
             name_dict[row[0]] = row[1][self.name_col]
         for s1, s2, score in score_tuples[:n]:
             print(f"{score:0.5f} {name_dict[s1]:20s} {name_dict[s2]:20s}")
+
+
+    def get_graph(self, threshold: float = 0):
+        """Return NetworkX graph with set of students whose logprob
+        with another student is > threshold
+
+        param threshold: minimum logprob for inclusion in set
+        """
+        g = nx.Graph()
+        for sid1, v in self.pairwise_logprobs.items():
+            for sid2, lp in v.items():
+                if lp > threshold:
+                    g.add_node(sid1)
+                    g.add_node(sid2)
+                    g.add_edge(sid1, sid2, weight=lp)
+        return g
