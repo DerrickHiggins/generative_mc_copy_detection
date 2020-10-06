@@ -1,1 +1,1 @@
-from .genmccd import get_score
+from .genmccd import GenMCCopyDetector
