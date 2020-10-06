@@ -1,0 +1,1 @@
+from .genmccd import get_score
