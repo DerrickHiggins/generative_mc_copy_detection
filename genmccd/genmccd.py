@@ -7,11 +7,8 @@ import pandas as pd
 ## TODO
 ## - Deal with global state
 ##   - Columns for responses (NUM_ITEMS)
-##   - Column for student ID
-##   - Column for Student Name
 
 
-NUM_ITEMS = 42
 DEFAULT_ALPHA = 0.5
 
 
@@ -23,20 +20,28 @@ class GenMCCopyDetector:
     pairwise_logprobs = None
 
     def __init__(
-        self, df: pd.DataFrame, alpha: float = DEFAULT_ALPHA, id_col: str = "StudentID"
+        self, df: pd.DataFrame, alpha: float = DEFAULT_ALPHA, id_col: str = "StudentID",
+        name_col: str = "LastName", num_items: int = 42
     ):
         """Perform analysis of student exam responses represented as a DataFrame
         to determine likelihood of copying answers.
+
         param df: Student response DataFrame for the exam, in ZipGrade format
-        param alpha: probability of copying on a single item under copying hypothesis
+        param alpha: Probability of copying on a single item under copying hypothesis
+        param id_col: Column with student id
+        param name_col: Column with student name
         """
         self.alpha = alpha
+        self.num_items = num_items
+        self.id_col = id_col
+        self.name_col = name_col
+
         self.input_df = df.set_index(id_col)
         self.input_df = self.input_df.fillna("NA")
 
         # Initialize response probabilities for item options
         self.answer_probs = []
-        for i in range(NUM_ITEMS):
+        for i in range(self.num_items):
             self.answer_probs.append(
                 self.input_df[f"Stu{i+1}"].value_counts(normalize=True).to_dict()
             )
@@ -60,7 +65,7 @@ class GenMCCopyDetector:
         """
         p_i = 0
         p_c = 0
-        for i in range(NUM_ITEMS):
+        for i in range(self.num_items):
             r1 = s1[f"Stu{i+1}"]
             r2 = s2[f"Stu{i+1}"]
             m1 = s1[f"Mark{i+1}"]
@@ -144,6 +149,6 @@ class GenMCCopyDetector:
 
         name_dict = {}
         for row in self.input_df.iterrows():
-            name_dict[row[0]] = row[1].LastName
+            name_dict[row[0]] = row[1][self.name_col]
         for s1, s2, score in score_tuples[:n]:
             print(f"{score:0.5f} {name_dict[s1]:20s} {name_dict[s2]:20s}")
