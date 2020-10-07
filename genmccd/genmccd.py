@@ -100,9 +100,15 @@ class GenMCCopyDetector:
                 p_i += log2(r2p)
 
                 ans_match = float(r1 == r2)
-                c1 = log2(r1p) + log2(self.alpha * ans_match + (1 - self.alpha) * r2p)
-                c2 = log2(r2p) + log2(self.alpha * ans_match + (1 - self.alpha) * r1p)
-                p_c += (c1 + c2) / 2
+                ## Here we take the average of logprob for s1 copying from s2 or vice-versa
+                # c1 = log2(r1p) + log2(self.alpha * ans_match + (1 - self.alpha) * r2p)
+                # c2 = log2(r2p) + log2(self.alpha * ans_match + (1 - self.alpha) * r1p)
+                # p_c += (c1 + c2) / 2
+                ## But we can simplify, since c1 is always equal to c2. Either
+                ##  * r1 == r2 in which case r1p == r2p, or
+                ##  * r1 != r2 in which case ans_match == 0 and 
+                ##    c1 == c2 == log2((1 - self.alpha) * r1p * r2p)
+                p_c += log2(r1p) + log2(self.alpha * ans_match + (1 - self.alpha) * r2p)
         return p_c - p_i
 
     def get_score(self, id1: Union[int, str], id2: Union[int, str]) -> float:
