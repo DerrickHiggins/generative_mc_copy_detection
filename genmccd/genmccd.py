@@ -177,7 +177,11 @@ class GenMCCopyDetector:
 
         name_dict = {}
         for row in self.input_df.iterrows():
-            name_dict[row[0]] = row[1][self.name_col]
+            try:
+                name_dict[row[0]] = row[1][self.name_col]
+            except KeyError:
+                # Name and ID column are the same
+                name_dict[row[0]] = row[0]
         for s1, s2, score in score_tuples[:n]:
             print(f"{score:0.5f} {name_dict[s1]:20s} {name_dict[s2]:20s}")
 
