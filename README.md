@@ -10,7 +10,7 @@ number of students is not sufficient to calibrate an IRT model.
 
 ```
 # Clone the repo
-git clone XX
+git clone https://github.com/DerrickHiggins/generative_mc_copy_detection.git
 
 # Install package
 cd generative_mc_copy_detection && pip install .
@@ -52,7 +52,7 @@ Example output might look like the following:
 5.85412 Suzy Spaniel         Ute Unga            
 3.68424 Coral Catchings      Fredricka Fioravanti
 ```
-The metric reported for each student pair is $log_2(P[X|copying]) - log_2(P[X|independent])$.  So a metric of 6.1 means that the students' test answers are $2^6.1$ times more likely under the copying scenario than they would be under the independent work scenario.
+The metric reported for each student pair is <img src="$log_2(P[A_1,A_2|copying])%20-%20log_2(P[A_1,A_2|independent])">.  So a metric of 6.1 means that the students' test answers are <img src="https://render.githubusercontent.com/render/math?math=2^{6.1}"> times more likely under the copying scenario than they would be under the independent work scenario.
 
 See the [examples](examples/) folder for some sample datasets and results.
 
